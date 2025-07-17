@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JJ Coders - HTML TutorBot</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #2e86de;
+    }
+    #questionInput {
+      width: 70%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    #askBtn {
+      padding: 10px 20px;
+      background-color: #2e86de;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      margin-left: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #askBtn:hover {
+      background-color: #216bb3;
+    }
+    #answerBox {
+      margin-top: 20px;
+      padding: 20px;
+      background: #f1f1f1;
+      border-left: 5px solid #2e86de;
+      border-radius: 5px;
+      min-height: 150px;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>JJ Coders: HTML TutorBot</h1>
+    <input type="text" id="questionInput" placeholder="Ask any HTML question...">
+    <button onclick="searchAnswer()" id="askBtn">Ask</button>
+    <div id="answerBox">Type a keyword like "image", "form", "head", "meta", etc.</div>
+  </div>
+
+  <script>
+    const data = {
+      "html": "HTML (HyperText Markup Language) is the standard language for creating web pages.",
+      "doctype": "<!DOCTYPE html> defines the document type and version of HTML.",
+      "head": "The <head> tag contains metadata, links to stylesheets, scripts, etc.",
+      "body": "The <body> tag contains the visible content of the HTML page.",
+      "title": "The <title> tag sets the title of the web page (shown in browser tab).",
+      "h1": "The <h1> tag defines the most important heading.",
+      "p": "The <p> tag defines a paragraph.",
+      "br": "The <br> tag inserts a line break.",
+      "hr": "The <hr> tag defines a horizontal rule.",
+      "a": "The <a> tag defines a hyperlink. Example: <a href='https://...'>Link</a>",
+      "img": "The <img> tag embeds an image. Example: <img src='image.jpg' alt='...'>",
+      "ul": "The <ul> tag defines an unordered list.",
+      "ol": "The <ol> tag defines an ordered list.",
+      "li": "The <li> tag defines a list item.",
+      "table": "The <table> tag defines a table structure.",
+      "tr": "The <tr> tag defines a table row.",
+      "td": "The <td> tag defines a table data/cell.",
+      "th": "The <th> tag defines a table header cell.",
+      "form": "The <form> tag is used to collect user input.",
+      "input": "The <input> tag defines an input control.",
+      "label": "The <label> tag defines a label for <input>.",
+      "button": "The <button> tag defines a clickable button.",
+      "textarea": "The <textarea> tag defines a multi-line text input.",
+      "select": "The <select> tag defines a dropdown list.",
+      "option": "The <option> tag defines options in a dropdown list.",
+      "iframe": "The <iframe> tag embeds another HTML page inside the current page.",
+      "meta": "The <meta> tag provides metadata about the HTML document.",
+      "link": "The <link> tag links external resources like CSS files.",
+      "script": "The <script> tag embeds or links to JavaScript.",
+      "style": "The <style> tag defines internal CSS.",
+      "div": "The <div> tag groups block-level elements.",
+      "span": "The <span> tag groups inline elements.",
+      "class": "The class attribute is used to define CSS class names.",
+      "id": "The id attribute uniquely identifies an element.",
+      "comment": "HTML comments look like this: <!-- comment -->",
+      "audio": "The <audio> tag embeds audio files. Example: <audio controls src='...'>",
+      "video": "The <video> tag embeds video files. Example: <video controls src='...'>",
+      "source": "The <source> tag defines media sources for <audio> or <video>.",
+      "nav": "The <nav> tag defines navigation links.",
+      "header": "The <header> tag represents the page header.",
+      "footer": "The <footer> tag represents the page footer.",
+      "article": "The <article> tag represents self-contained content.",
+      "section": "The <section> tag groups related content.",
+      "aside": "The <aside> tag defines content aside from the main content.",
+      "main": "The <main> tag represents the main content of the document.",
+      "details": "The <details> tag is used for additional content that users can view or hide.",
+      "summary": "The <summary> tag is used in conjunction with <details> to define a summary.",
+      "pre": "The <pre> tag displays preformatted text.",
+      "code": "The <code> tag is used to define source code snippets.",
+      "kbd": "The <kbd> tag defines keyboard input.",
+      "mark": "The <mark> tag highlights text.",
+      "em": "The <em> tag defines emphasized text (italic).",
+      "strong": "The <strong> tag defines important text (bold).",
+      "abbr": "The <abbr> tag defines abbreviations.",
+      "cite": "The <cite> tag defines a citation.",
+      "bdo": "The <bdo> tag overrides text direction.",
+      "canvas": "The <canvas> tag is used for drawing graphics via scripting (usually JavaScript).",
+      "svg": "The <svg> tag is used to define vector-based graphics.",
+      "noscript": "The <noscript> tag defines content for users with JavaScript disabled.",
+      "base": "The <base> tag sets the base URL for relative links.",
+      "fieldset": "The <fieldset> tag groups related elements in a form.",
+      "legend": "The <legend> tag defines a caption for the <fieldset>.",
+      "datalist": "The <datalist> tag contains a set of <option> elements for input suggestions.",
+      "output": "The <output> tag represents the result of a calculation.",
+      "template": "The <template> tag holds client-side content that won’t be rendered when the page loads.",
+      "track": "The <track> tag specifies text tracks for <video> and <audio>.",
+      "time": "The <time> tag defines a specific time or date.",
+      "progress": "The <progress> tag shows the progress of a task.",
+      "meter": "The <meter> tag shows a scalar measurement within a known range.",
+      "data": "The <data> tag links a given content with a machine-readable translation.",
+      "map": "The <map> tag defines image maps.",
+      "area": "The <area> tag defines clickable areas inside an image map.",
+      "blockquote": "The <blockquote> tag defines a section that is quoted from another source.",
+      "address": "The <address> tag provides contact info for the author.",
+      "del": "The <del> tag defines deleted text.",
+      "ins": "The <ins> tag defines inserted text.",
+      "sup": "The <sup> tag defines superscript text.",
+      "sub": "The <sub> tag defines subscript text.",
+      "html5": "HTML5 is the latest version of HTML with support for audio, video, canvas, and semantic elements.",
+      "semantic": "Semantic HTML uses tags that describe their meaning, like <article>, <section>, <nav>.",
+      "accessibility": "Use alt attributes, landmarks, and proper tags to make HTML accessible.",
+      "responsive": "Responsive design makes web pages look good on all screen sizes using meta tags and CSS.",
+      "favicon": "A favicon is the small icon in the browser tab, set using <link rel='icon' href='favicon.ico'>",
+      "viewport": "The viewport meta tag helps with responsive design. Example: <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+    };
+
+    function searchAnswer() {
+      const input = document.getElementById("questionInput").value.toLowerCase();
+      const box = document.getElementById("answerBox");
+
+      for (let keyword in data) {
+        if (input.includes(keyword)) {
+          box.textContent = data[keyword];
+          return;
+        }
+      }
+      box.textContent = "Sorry, I don’t know that yet. Try another keyword.";
+    }
+
+    // Trigger search on Enter key
+    document.getElementById("questionInput").addEventListener("keypress", function (e) {
+      if (e.key === "Enter") searchAnswer();
+    });
+  </script>
+</body>
+</html>
