@@ -2,171 +2,201 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>JJ Coders - HTML TutorBot</title>
+  <title>JJ Coders - HTML Tutor</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f9f9f9;
-      color: #333;
+      font-family: Arial, sans-serif;
+      background: #f7f9fc;
       margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #004aad;
+      color: white;
       padding: 20px;
+      text-align: center;
     }
     .container {
       max-width: 800px;
-      margin: auto;
-      background: #fff;
-      padding: 30px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    h1 {
-      text-align: center;
-      color: #2e86de;
-    }
-    #questionInput {
-      width: 70%;
+    input[type="text"] {
+      width: 80%;
       padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
       font-size: 16px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      margin-right: 10px;
     }
-    #askBtn {
-      padding: 10px 20px;
-      background-color: #2e86de;
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      background: #004aad;
       color: white;
       border: none;
       border-radius: 5px;
-      margin-left: 10px;
       cursor: pointer;
-      font-weight: bold;
     }
-    #askBtn:hover {
-      background-color: #216bb3;
+    button:hover {
+      background: #00337f;
+    }
+    .mic-button {
+      background: #ff4d4d;
+      margin-left: 10px;
     }
     #answerBox {
       margin-top: 20px;
-      padding: 20px;
-      background: #f1f1f1;
-      border-left: 5px solid #2e86de;
+      font-size: 18px;
+      padding: 15px;
+      background: #e6f2ff;
+      border-left: 4px solid #004aad;
       border-radius: 5px;
-      min-height: 150px;
-      white-space: pre-line;
+    }
+    #count {
+      color: #004aad;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
+
+  <header>
+    <h1>JJ Coders – HTML Tutor 🤖</h1>
+    <p>Ask me anything about HTML!</p>
+  </header>
+
   <div class="container">
-    <h1>JJ Coders: HTML TutorBot</h1>
-    <input type="text" id="questionInput" placeholder="Ask any HTML question...">
-    <button onclick="searchAnswer()" id="askBtn">Ask</button>
-    <div id="answerBox">Type a keyword like "image", "form", "head", "meta", etc.</div>
+    <input type="text" id="questionInput" placeholder="Ask me a question about HTML..." />
+    <button onclick="answerQuestion()">Ask</button>
+    <button class="mic-button" onclick="startListening()">🎤 Speak</button>
+
+    <div id="answerBox">Your answer will appear here.</div>
+    <p>Questions answered so far: <span id="count">0</span></p>
   </div>
 
   <script>
-    const data = {
-      "html": "HTML (HyperText Markup Language) is the standard language for creating web pages.",
-      "doctype": "<!DOCTYPE html> defines the document type and version of HTML.",
-      "head": "The <head> tag contains metadata, links to stylesheets, scripts, etc.",
-      "body": "The <body> tag contains the visible content of the HTML page.",
-      "title": "The <title> tag sets the title of the web page (shown in browser tab).",
-      "h1": "The <h1> tag defines the most important heading.",
-      "p": "The <p> tag defines a paragraph.",
-      "br": "The <br> tag inserts a line break.",
-      "hr": "The <hr> tag defines a horizontal rule.",
-      "a": "The <a> tag defines a hyperlink. Example: <a href='https://...'>Link</a>",
-      "img": "The <img> tag embeds an image. Example: <img src='image.jpg' alt='...'>",
-      "ul": "The <ul> tag defines an unordered list.",
-      "ol": "The <ol> tag defines an ordered list.",
-      "li": "The <li> tag defines a list item.",
-      "table": "The <table> tag defines a table structure.",
-      "tr": "The <tr> tag defines a table row.",
-      "td": "The <td> tag defines a table data/cell.",
-      "th": "The <th> tag defines a table header cell.",
-      "form": "The <form> tag is used to collect user input.",
-      "input": "The <input> tag defines an input control.",
-      "label": "The <label> tag defines a label for <input>.",
-      "button": "The <button> tag defines a clickable button.",
-      "textarea": "The <textarea> tag defines a multi-line text input.",
-      "select": "The <select> tag defines a dropdown list.",
-      "option": "The <option> tag defines options in a dropdown list.",
-      "iframe": "The <iframe> tag embeds another HTML page inside the current page.",
-      "meta": "The <meta> tag provides metadata about the HTML document.",
-      "link": "The <link> tag links external resources like CSS files.",
-      "script": "The <script> tag embeds or links to JavaScript.",
-      "style": "The <style> tag defines internal CSS.",
-      "div": "The <div> tag groups block-level elements.",
-      "span": "The <span> tag groups inline elements.",
-      "class": "The class attribute is used to define CSS class names.",
-      "id": "The id attribute uniquely identifies an element.",
-      "comment": "HTML comments look like this: <!-- comment -->",
-      "audio": "The <audio> tag embeds audio files. Example: <audio controls src='...'>",
-      "video": "The <video> tag embeds video files. Example: <video controls src='...'>",
-      "source": "The <source> tag defines media sources for <audio> or <video>.",
-      "nav": "The <nav> tag defines navigation links.",
-      "header": "The <header> tag represents the page header.",
-      "footer": "The <footer> tag represents the page footer.",
-      "article": "The <article> tag represents self-contained content.",
-      "section": "The <section> tag groups related content.",
-      "aside": "The <aside> tag defines content aside from the main content.",
-      "main": "The <main> tag represents the main content of the document.",
-      "details": "The <details> tag is used for additional content that users can view or hide.",
-      "summary": "The <summary> tag is used in conjunction with <details> to define a summary.",
-      "pre": "The <pre> tag displays preformatted text.",
-      "code": "The <code> tag is used to define source code snippets.",
-      "kbd": "The <kbd> tag defines keyboard input.",
-      "mark": "The <mark> tag highlights text.",
-      "em": "The <em> tag defines emphasized text (italic).",
-      "strong": "The <strong> tag defines important text (bold).",
-      "abbr": "The <abbr> tag defines abbreviations.",
-      "cite": "The <cite> tag defines a citation.",
-      "bdo": "The <bdo> tag overrides text direction.",
-      "canvas": "The <canvas> tag is used for drawing graphics via scripting (usually JavaScript).",
-      "svg": "The <svg> tag is used to define vector-based graphics.",
-      "noscript": "The <noscript> tag defines content for users with JavaScript disabled.",
-      "base": "The <base> tag sets the base URL for relative links.",
-      "fieldset": "The <fieldset> tag groups related elements in a form.",
-      "legend": "The <legend> tag defines a caption for the <fieldset>.",
-      "datalist": "The <datalist> tag contains a set of <option> elements for input suggestions.",
-      "output": "The <output> tag represents the result of a calculation.",
-      "template": "The <template> tag holds client-side content that won’t be rendered when the page loads.",
-      "track": "The <track> tag specifies text tracks for <video> and <audio>.",
-      "time": "The <time> tag defines a specific time or date.",
-      "progress": "The <progress> tag shows the progress of a task.",
-      "meter": "The <meter> tag shows a scalar measurement within a known range.",
-      "data": "The <data> tag links a given content with a machine-readable translation.",
-      "map": "The <map> tag defines image maps.",
-      "area": "The <area> tag defines clickable areas inside an image map.",
-      "blockquote": "The <blockquote> tag defines a section that is quoted from another source.",
-      "address": "The <address> tag provides contact info for the author.",
-      "del": "The <del> tag defines deleted text.",
-      "ins": "The <ins> tag defines inserted text.",
-      "sup": "The <sup> tag defines superscript text.",
-      "sub": "The <sub> tag defines subscript text.",
-      "html5": "HTML5 is the latest version of HTML with support for audio, video, canvas, and semantic elements.",
-      "semantic": "Semantic HTML uses tags that describe their meaning, like <article>, <section>, <nav>.",
-      "accessibility": "Use alt attributes, landmarks, and proper tags to make HTML accessible.",
-      "responsive": "Responsive design makes web pages look good on all screen sizes using meta tags and CSS.",
-      "favicon": "A favicon is the small icon in the browser tab, set using <link rel='icon' href='favicon.ico'>",
-      "viewport": "The viewport meta tag helps with responsive design. Example: <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+    const faq = {
+      "html": "HTML (HyperText Markup Language) is used to structure content on the web.",
+      "doctype": "<!DOCTYPE html> tells the browser to expect an HTML5 document.",
+      "head": "<head> contains metadata and links to stylesheets and scripts.",
+      "body": "<body> includes all the visible content of the web page.",
+      "title": "<title> appears on the browser tab.",
+      "meta": "Meta tags provide metadata such as charset, viewport, description, etc.",
+      "link": "<link> is used to link external files like CSS.",
+      "script": "<script> allows you to run JavaScript in HTML.",
+      "a": "The <a> tag creates a hyperlink to another page or section.",
+      "img": "The <img> tag embeds images. It requires 'src' and 'alt' attributes.",
+      "ul": "<ul> defines an unordered list. Use <li> for list items.",
+      "ol": "<ol> defines an ordered list.",
+      "li": "<li> defines a list item.",
+      "br": "<br> inserts a line break.",
+      "hr": "<hr> adds a horizontal line.",
+      "table": "<table> is used to create a table with rows and cells.",
+      "tr": "<tr> defines a table row.",
+      "td": "<td> defines a table data cell.",
+      "th": "<th> defines a table header cell.",
+      "form": "<form> collects user input via input fields, checkboxes, etc.",
+      "input": "<input> accepts user data, like text, email, password, etc.",
+      "textarea": "<textarea> is a larger input box for text.",
+      "button": "<button> defines a clickable button.",
+      "label": "<label> provides a label for input fields.",
+      "div": "<div> is a generic container with no special meaning.",
+      "span": "<span> is an inline container.",
+      "class": "Class is an attribute used to assign CSS styles to elements.",
+      "id": "ID is a unique identifier used in CSS and JavaScript.",
+      "iframe": "The <iframe> tag embeds another web page.",
+      "audio": "<audio> is used to embed audio clips.",
+      "video": "<video> is used to embed videos.",
+      "canvas": "<canvas> is used for drawing graphics with JavaScript.",
+      "semantic": "Semantic tags like <article>, <section>, <header> describe meaning.",
+      "responsive": "Responsive design makes sites look good on all devices using media queries.",
+      "favicon": "A favicon is the small icon on your browser tab."
+      // Add more if needed
     };
 
-    function searchAnswer() {
-      const input = document.getElementById("questionInput").value.toLowerCase();
-      const box = document.getElementById("answerBox");
+    let answeredCount = localStorage.getItem('answeredCount') || 0;
+    document.getElementById("count").textContent = answeredCount;
 
-      for (let keyword in data) {
-        if (input.includes(keyword)) {
-          box.textContent = data[keyword];
-          return;
+    function answerQuestion() {
+      const input = document.getElementById("questionInput").value.toLowerCase().trim();
+      let bestMatch = null;
+      let highestScore = 0;
+
+      for (const keyword in faq) {
+        const score = fuzzyMatch(input, keyword);
+        if (score > highestScore) {
+          highestScore = score;
+          bestMatch = keyword;
         }
       }
-      box.textContent = "Sorry, I don’t know that yet. Try another keyword.";
+
+      let answer = "Sorry, I don't know that yet.";
+      if (highestScore > 0.4) {
+        answer = faq[bestMatch];
+        answeredCount++;
+        localStorage.setItem('answeredCount', answeredCount);
+        document.getElementById("count").textContent = answeredCount;
+      }
+
+      document.getElementById("answerBox").textContent = answer;
     }
 
-    // Trigger search on Enter key
-    document.getElementById("questionInput").addEventListener("keypress", function (e) {
-      if (e.key === "Enter") searchAnswer();
-    });
+    function fuzzyMatch(input, keyword) {
+      input = input.toLowerCase();
+      keyword = keyword.toLowerCase();
+      const distance = levenshtein(input, keyword);
+      return 1 - distance / Math.max(input.length, keyword.length);
+    }
+
+    function levenshtein(a, b) {
+      const matrix = [];
+      for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+      for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+      for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+          if (b.charAt(i - 1) === a.charAt(j - 1)) {
+            matrix[i][j] = matrix[i - 1][j - 1];
+          } else {
+            matrix[i][j] = Math.min(
+              matrix[i - 1][j - 1] + 1,
+              matrix[i][j - 1] + 1,
+              matrix[i - 1][j] + 1
+            );
+          }
+        }
+      }
+      return matrix[b.length][a.length];
+    }
+
+    // Voice Recognition
+    function startListening() {
+      if (!('webkitSpeechRecognition' in window)) {
+        alert("Your browser does not support Speech Recognition");
+        return;
+      }
+
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+
+      recognition.start();
+
+      recognition.onresult = function (event) {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById("questionInput").value = transcript;
+        answerQuestion();
+      };
+
+      recognition.onerror = function (event) {
+        alert("Voice recognition error: " + event.error);
+      };
+    }
   </script>
+
 </body>
 </html>
