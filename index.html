@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,124 +80,53 @@
   </div>
 
   <script>
-    const faq = {
-      "html": "HTML (HyperText Markup Language) is used to structure content on the web.",
-      "doctype": "<!DOCTYPE html> tells the browser to expect an HTML5 document.",
-      "head": "<head> contains metadata and links to stylesheets and scripts.",
-      "body": "<body> includes all the visible content of the web page.",
-      "title": "<title> appears on the browser tab.",
-      "meta": "Meta tags provide metadata such as charset, viewport, description, etc.",
-      "link": "<link> is used to link external files like CSS.",
-      "script": "<script> allows you to run JavaScript in HTML.",
-      "a": "The <a> tag creates a hyperlink to another page or section.",
-      "img": "The <img> tag embeds images. It requires 'src' and 'alt' attributes.",
-      "ul": "<ul> defines an unordered list. Use <li> for list items.",
-      "ol": "<ol> defines an ordered list.",
-      "li": "<li> defines a list item.",
-      "br": "<br> inserts a line break.",
-      "hr": "<hr> adds a horizontal line.",
-      "table": "<table> is used to create a table with rows and cells.",
-      "tr": "<tr> defines a table row.",
-      "td": "<td> defines a table data cell.",
-      "th": "<th> defines a table header cell.",
-      "form": "<form> collects user input via input fields, checkboxes, etc.",
-      "input": "<input> accepts user data, like text, email, password, etc.",
-      "textarea": "<textarea> is a larger input box for text.",
-      "button": "<button> defines a clickable button.",
-      "label": "<label> provides a label for input fields.",
-      "div": "<div> is a generic container with no special meaning.",
-      "span": "<span> is an inline container.",
-      "class": "Class is an attribute used to assign CSS styles to elements.",
-      "id": "ID is a unique identifier used in CSS and JavaScript.",
-      "iframe": "The <iframe> tag embeds another web page.",
-      "audio": "<audio> is used to embed audio clips.",
-      "video": "<video> is used to embed videos.",
-      "canvas": "<canvas> is used for drawing graphics with JavaScript.",
-      "semantic": "Semantic tags like <article>, <section>, <header> describe meaning.",
-      "responsive": "Responsive design makes sites look good on all devices using media queries.",
-      "favicon": "A favicon is the small icon on your browser tab."
-      // Add more if needed
-    };
+  const faq = {
+    "html": "HTML (HyperText Markup Language) is the standard language for creating web pages.",
+    "doctype": "<!DOCTYPE html> defines the document type and version of HTML.",
+    "head": "The <head> tag contains metadata, links to stylesheets, scripts, etc.",
+    "body": "The <body> tag contains the visible content of the HTML page.",
+    "title": "The <title> tag sets the title of the web page (shown in browser tab).",
+    "a": "The <a> tag defines a hyperlink. Example: <a href='https://...'>Link</a>",
+    "img": "The <img> tag embeds an image. Example: <img src='image.jpg' alt='...'>",
+    "table": "The <table> tag defines a table structure.",
+    "form": "The <form> tag is used to collect user input.",
+    "comment": "HTML comments look like this: <!-- comment -->",
+    "audio": "The <audio> tag embeds audio files. Example: <audio controls src='...'>",
+    "video": "The <video> tag embeds video files. Example: <video controls src='...'>",
+    "canvas": "The <canvas> tag is used for drawing graphics via scripting (usually JavaScript).",
+    "responsive": "Responsive design makes web pages look good on all screen sizes using meta tags and CSS.",
+    "semantic": "Semantic HTML uses tags that describe their meaning, like <article>, <section>, <nav>.",
+    "favicon": "A favicon is the small icon in the browser tab, set using <link rel='icon' href='favicon.ico'>"
+    // ...you can keep extending this
+  };
 
-    let answeredCount = localStorage.getItem('answeredCount') || 0;
+  let answeredCount = localStorage.getItem('answeredCount') || 0;
+  document.getElementById("count").textContent = answeredCount;
+
+  function answerQuestion() {
+    const input = document.getElementById("questionInput").value.toLowerCase().trim();
+    let found = null;
+
+    for (const keyword in faq) {
+      if (input.includes(keyword)) {
+        found = faq[keyword];
+        break;
+      }
+    }
+
+    if (!found) {
+      found = "Sorry, I don't know that yet. Try asking something else about HTML.";
+    }
+
+    document.getElementById("answerBox").textContent = found;
+
+    // Update counter
+    answeredCount++;
+    localStorage.setItem('answeredCount', answeredCount);
     document.getElementById("count").textContent = answeredCount;
+  }
+</script>
 
-    function answerQuestion() {
-      const input = document.getElementById("questionInput").value.toLowerCase().trim();
-      let bestMatch = null;
-      let highestScore = 0;
-
-      for (const keyword in faq) {
-        const score = fuzzyMatch(input, keyword);
-        if (score > highestScore) {
-          highestScore = score;
-          bestMatch = keyword;
-        }
-      }
-
-      let answer = "Sorry, I don't know that yet.";
-      if (highestScore > 0.4) {
-        answer = faq[bestMatch];
-        answeredCount++;
-        localStorage.setItem('answeredCount', answeredCount);
-        document.getElementById("count").textContent = answeredCount;
-      }
-
-      document.getElementById("answerBox").textContent = answer;
-    }
-
-    function fuzzyMatch(input, keyword) {
-      input = input.toLowerCase();
-      keyword = keyword.toLowerCase();
-      const distance = levenshtein(input, keyword);
-      return 1 - distance / Math.max(input.length, keyword.length);
-    }
-
-    function levenshtein(a, b) {
-      const matrix = [];
-      for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-      for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-
-      for (let i = 1; i <= b.length; i++) {
-        for (let j = 1; j <= a.length; j++) {
-          if (b.charAt(i - 1) === a.charAt(j - 1)) {
-            matrix[i][j] = matrix[i - 1][j - 1];
-          } else {
-            matrix[i][j] = Math.min(
-              matrix[i - 1][j - 1] + 1,
-              matrix[i][j - 1] + 1,
-              matrix[i - 1][j] + 1
-            );
-          }
-        }
-      }
-      return matrix[b.length][a.length];
-    }
-
-    // Voice Recognition
-    function startListening() {
-      if (!('webkitSpeechRecognition' in window)) {
-        alert("Your browser does not support Speech Recognition");
-        return;
-      }
-
-      const recognition = new webkitSpeechRecognition();
-      recognition.lang = 'en-US';
-      recognition.interimResults = false;
-
-      recognition.start();
-
-      recognition.onresult = function (event) {
-        const transcript = event.results[0][0].transcript;
-        document.getElementById("questionInput").value = transcript;
-        answerQuestion();
-      };
-
-      recognition.onerror = function (event) {
-        alert("Voice recognition error: " + event.error);
-      };
-    }
-  </script>
 
 </body>
 </html>
